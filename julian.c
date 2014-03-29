@@ -1,5 +1,5 @@
 /* TODO:
- - Write manpage
+ - Write a manpage
  - Add a switch for setting the precision of Julian date output
  - Add an option for setting the date of the Reformation (affecting input or
    just output?)
@@ -47,7 +47,7 @@ bool breakSeconds(int secs, int* hour, int* min, int* sec);
 
 void toJulianDate(struct yds when, int* jdays, int* jsecs);
 struct yds fromJulianDate(int jdays, int jsecs);
-void julian2julian(int jdays, int* year, int* ydays);
+void julian2julian(int jdays, int* year, int* yday);
 
 void printYDS(struct yds when);
 void printJulian(int jdays, int jsecs, int places);
@@ -272,20 +272,20 @@ struct yds fromJulianDate(int jdays, int jsecs) {
    return (struct yds) {.year = year, .days = days, .secs = secs};
   }
  } else {
-  int year, ydays;
-  julian2julian(days, &year, &ydays);
-  return (struct yds) {.year = year, .days = ydays, .secs = secs};
+  int year, yday;
+  julian2julian(days, &year, &yday);
+  return (struct yds) {.year = year, .days = yday, .secs = secs};
  }
 }
 
-void julian2julian(int jdays, int* year, int* ydays) {
+void julian2julian(int jdays, int* year, int* yday) {
  /* Convert a Julian date to a year & yday in the Julian calendar */
  *year = (jdays / 1461) * 4;
- *ydays = jdays % 1461;
- if (*ydays >= 366) {
-  *ydays -= 366;
-  *year += 1 + *ydays/365;
-  *ydays %= 365;
+ *yday = jdays % 1461;
+ if (*yday >= 366) {
+  *yday -= 366;
+  *year += 1 + *yday/365;
+  *yday %= 365;
  }
  *year -= 4712;
 }
@@ -320,17 +320,17 @@ void printJulian(int jdays, int jsecs, int places) {
 void printOldStyle(int jdays, int jsecs) {
  int secs = jsecs >= 0 ? jsecs + HALF_DAY : -1;
  if (secs > DAY) {secs -= DAY; jdays++; }
- int year, ydays;
- julian2julian(jdays, &year, &ydays);
+ int year, yday;
+ julian2julian(jdays, &year, &yday);
  int month=0, mday=0;
  for (int i=0; i<12; i++) {
   int length = months[i];
   if (i == 1 && year % 4 == 0) length++;
-  if (ydays < length) {
+  if (yday < length) {
    month = i+1;
-   mday = ydays+1;
+   mday = yday+1;
    break;
-  } else {ydays -= length; }
+  } else {yday -= length; }
  }
  printf("O.S. %.4d-%02d-%02d", year, month, mday);
  if (secs >= 0) {
