@@ -1,0 +1,4 @@
+https://en.wikipedia.org/wiki/Julian_day
+https://en.wikipedia.org/wiki/Gregorian_calendar
+https://en.wikipedia.org/wiki/Old_Style_and_New_Style_dates
+http://www.nr.com/julian.html
