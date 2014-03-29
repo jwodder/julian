@@ -1,10 +1,3 @@
-/* TODO:
- - Write a manpage
- - Add a switch for setting the precision of Julian date output
- - Add an option for setting the date of the Reformation (affecting input or
-   just output?)
-*/
-
 /* Unless otherwise specified, all functions use a Gregorian calendar with the
  * Reformation taking place on 1582-10-05/15. */
 

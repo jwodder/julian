@@ -1,5 +1,4 @@
 #!/usr/bin/perl -w
-# TODO: Add testing of O.S. dates
 use strict;
 
 sub test($$);
@@ -18,7 +17,7 @@ print $success + $failure, " tests: $success successes, $failure failures\n";
 
 sub test($$) {
  my($in, $goodOut) = @_;
- my $outOut = `$program $in`;
+ my $outOut = `$program -- $in`;
  chomp $outOut;
  #$outOut =~ s/^.* = (\S+).*$/$1/;
  $outOut =~ s/^.* = //;
@@ -39,6 +38,8 @@ EOT
 
 __DATA__
 
+0		-4712-01-01
+366		-4711-01-01
 1719656		-0004-02-29
 2159358		1200-01-01
 2195883		1300-01-01
