@@ -1,6 +1,6 @@
 /* TODO:
+ - Write manpage
  - Add a switch for setting the precision of Julian date output
- - Reconsider the " ± 0.5" thing
  - Add an option for setting the date of the Reformation (affecting input or
    just output?)
 */
@@ -305,17 +305,15 @@ void printYDS(struct yds when) {
 
 void printJulian(int jdays, int jsecs, int places) {
  printf("%d", jdays);
- if (places > 0) {
-  if (jsecs >= 0) {
-   putchar('.');
-   for (int i=0; i<places; i++) {
-    jsecs *= 10;
-    int dig = jsecs / DAY;
-    jsecs %= DAY;
-    if (i == places-1 && jsecs * 2 >= DAY) dig++;
-    printf("%d", dig);
-   }
-  } else {printf(" ± 0.5"); }
+ if (places > 0 && jsecs >= 0) {
+  putchar('.');
+  for (int i=0; i<places; i++) {
+   jsecs *= 10;
+   int dig = jsecs / DAY;
+   jsecs %= DAY;
+   if (i == places-1 && jsecs * 2 >= DAY) dig++;
+   printf("%d", dig);
+  }
  }
 }
 
