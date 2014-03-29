@@ -1,8 +1,5 @@
 /* TODO:
- - Add a `-q` option for suppressing all output on a line through the " = "
  - Add a switch for setting the precision of Julian date output
- - Add a switch for turning off O.S. output
- - Add a switch for forcing O.S. output for all post-Reformation dates
  - Reconsider the " ± 0.5" thing
  - Add an option for setting the date of the Reformation (affecting input or
    just output?)
@@ -15,6 +12,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
+#include <unistd.h>
 
 #define JS_PRECISION  5
 
@@ -28,10 +26,13 @@
 #define START1583    (GREG_REFORM + 78)  /* noon on 1583-01-01 */
 #define UK_REFORM    2361222             /* noon on 1752-09-14 */
 
-struct yds {int year, days, secs; };
-/* All values are zero-indexed (year == 0 ⇒ 1 BC, days == 0 ⇒ Jan 1). */
+struct yds {
+ int year;  /* 0 == 1 BC */
+ int days;  /* days from the start of the year; 0 == Jan 01 */
+ int secs;  /* seconds after midnight; negative means ignore the field */
+};
 
-static int months[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+const int months[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 struct yds now(void);
 
@@ -53,16 +54,33 @@ void printJulian(int jdays, int jsecs, int places);
 void printOldStyle(int jdays, int jsecs);
 
 int main(int argc, char** argv) {
- if (argc == 1) {
+ int ch;
+ bool quiet = false;
+ int oldStyle = 0;
+ while ((ch = getopt(argc, argv, "qoO")) != -1) {
+  switch (ch) {
+   case 'q': quiet = true; break;
+   case 'o': oldStyle = 1; break;
+   case 'O': oldStyle = 2; break;
+   default:
+    fprintf(stderr, "Usage: %s [-oOq] [date ...]\n", argv[0]);
+    return 2;
+  }
+ }
+ argc -= optind;
+ argv += optind;
+ if (argc == 0) {
   struct yds nowest = now();
-  printYDS(nowest);
-  printf(" = ");
+  if (!quiet) {
+   printYDS(nowest);
+   printf(" = ");
+  }
   int jd, js;
   toJulianDate(nowest, &jd, &js);
   printJulian(jd, js, JS_PRECISION);
   putchar('\n');
  } else {
-  for (int i=1; i<argc; i++) {
+  for (int i=0; i<argc; i++) {
    char* endp;
    int leading = (int) strtol(argv[i], &endp, 10);
    if (endp == argv[i]) {
@@ -87,8 +105,10 @@ int main(int argc, char** argv) {
      fprintf(stderr, "%s: %s: invalid argument\n", argv[0], argv[i]);
      continue;
     }
-    printYDS(when);
-    printf(" = ");
+    if (!quiet) {
+     printYDS(when);
+     printf(" = ");
+    }
     int jd, js;
     toJulianDate(when, &jd, &js);
     printJulian(jd, js, JS_PRECISION);
@@ -117,17 +137,18 @@ int main(int argc, char** argv) {
      jsecs *= DAY;
      for (int j=0; j < digits; j++) jsecs /= 10;
     }
-    printJulian(jdays, jsecs, JS_PRECISION);
-    printf(" = ");
+    if (!quiet) {
+     printJulian(jdays, jsecs, JS_PRECISION);
+     printf(" = ");
+    }
     struct yds when = fromJulianDate(jdays, jsecs);
     printYDS(when);
-/*
-    if (GREG_REFORM <= jdays && jdays < UK_REFORM) {
+    if (oldStyle && GREG_REFORM <= jdays
+		 && (jdays < UK_REFORM || oldStyle > 1)) {
      printf(" [");
      printOldStyle(jdays, jsecs);
      putchar(']');
     }
-*/
     putchar('\n');
 
    } else {fprintf(stderr, "%s: %s: invalid argument\n", argv[0], argv[i]); }
