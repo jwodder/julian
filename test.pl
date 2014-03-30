@@ -3,7 +3,7 @@ use strict;
 
 sub test($$);
 
-my $program = "./julian2";
+my $program = "./julian";
 
 my($success, $failure) = (0, 0);
 while (<DATA>) {
@@ -17,12 +17,8 @@ print $success + $failure, " tests: $success successes, $failure failures\n";
 
 sub test($$) {
  my($in, $goodOut) = @_;
- my $outOut = `$program -- $in`;
+ my $outOut = `$program -q -- $in`;
  chomp $outOut;
- #$outOut =~ s/^.* = (\S+).*$/$1/;
- $outOut =~ s/^.* = //;
- $outOut =~ s/ ± 0.5$//;
- $outOut = (split ' ', $outOut)[-1];
  if ($goodOut eq $outOut) { $success++ }
  else {
   print <<EOT;
