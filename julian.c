@@ -254,34 +254,48 @@ struct yds fromJulianDate(int jdays, int jsecs) {
  int days = jdays;
  int secs = jsecs >= 0 ? jsecs + HALF_DAY : -1;
  if (secs > DAY) {secs -= DAY; days++; }
- if (days >= GREG_REFORM) {
-  if (days < START1583) {
-   return (struct yds) {.year = 1582, .days = days - GREG_REFORM + YDAY_REFORM,
-			.secs = secs};
-  } else {
-   days -= START1583;
-   int year = days / 365 + 1583;
-   days -= daysSince1582(year);
-   while (days < 0) days += yearLength(--year);
-   return (struct yds) {.year = year, .days = days, .secs = secs};
-  }
- } else {
+ if (days < GREG_REFORM) {
   int year, yday;
   julian2julian(days, &year, &yday);
   return (struct yds) {.year = year, .days = yday, .secs = secs};
+ } else if (days < START1583) {
+  return (struct yds) {.year = 1582, .days = days - GREG_REFORM + YDAY_REFORM,
+		       .secs = secs};
+ } else {
+  days -= START1583;
+  int year = days / 365 + 1583;
+  days -= daysSince1582(year);
+  while (days < 0) days += yearLength(--year);
+  return (struct yds) {.year = year, .days = days, .secs = secs};
  }
 }
 
 void julian2julian(int jdays, int* year, int* yday) {
  /* Convert a Julian date to a year & yday in the Julian calendar */
- *year = (jdays / 1461) * 4;
- *yday = jdays % 1461;
- if (*yday >= 366) {
-  *yday -= 366;
-  *year += 1 + *yday/365;
-  *yday %= 365;
+ if (jdays < 0) {
+  /* TODO: Simplify this. */
+  jdays = -jdays - 1;
+  *year = (jdays / 1461) * 4;
+  *yday = jdays % 1461;
+  if (*yday == 1460) {
+   *year += 3;
+   *yday = 365;
+  } else if (*yday >= 365) {
+   *year += *yday/365;
+   *yday %= 365;
+  }
+  *year = -4713 - *year;
+  *yday = yearLength(*year) - 1 - *yday;
+ } else {
+  *year = (jdays / 1461) * 4;
+  *yday = jdays % 1461;
+  if (*yday >= 366) {
+   *yday -= 366;
+   *year += 1 + *yday/365;
+   *yday %= 365;
+  }
+  *year -= 4712;
  }
- *year -= 4712;
 }
 
 void printYDS(struct yds when) {

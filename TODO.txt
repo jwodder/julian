@@ -1,10 +1,12 @@
 - Write a manpage
 
-- Test negative Julian dates!
 - Add automated testing of O.S. date output
+- Test more negative Julian dates
 
 - Add a switch for setting the precision of Julian date output
 - Add an option for setting the date of the Reformation (affecting input or
   just output?)
 - Make dates beginning with minus signs be recognized as such rather than as
   invalid options
+
+- Handle all of the sections marked "TODO" in the code
