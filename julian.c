@@ -235,7 +235,10 @@ bool breakSeconds(int secs, int* hour, int* min, int* sec) {
 }
 
 void toJulianDate(struct yds when, int* jdays, int* jsecs) {
- if (beforeGregorian(when)) {
+ if (when.year < -4712) {
+  int revYear = -4712 - when.year;
+  *jdays = when.days - (revYear * 365 + revYear / 4);
+ } else if (beforeGregorian(when)) {
   *jdays = (when.year + 4712) * 365 + (when.year + 4712 + 3)/4 + when.days;
   /* Note that -1/4 == 0. */
  } else if (when.year == 1582) {
@@ -262,6 +265,7 @@ struct yds fromJulianDate(int jdays, int jsecs) {
   return (struct yds) {.year = 1582, .days = days - GREG_REFORM + YDAY_REFORM,
 		       .secs = secs};
  } else {
+  /* TODO: Make this more efficient. */
   days -= START1583;
   int year = days / 365 + 1583;
   days -= daysSince1582(year);
