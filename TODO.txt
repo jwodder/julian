@@ -5,9 +5,9 @@
 - Add a switch for setting the precision of Julian date output
 - Add an option for setting the date of the Reformation (affecting input or
   just output?)
+- Add a way to set the stopping point for `-o` O.S. dates
 - Make dates beginning with minus signs be recognized as such rather than as
   invalid options
-- If an error message is printed, the exit status should be nonzero.
 - Represent seconds as floats?
 - Add an option for printing calendar dates as YYYY-DDD, the latter part being
   the yday, starting at 001
@@ -17,3 +17,4 @@
 
 - Mention rounding errors and truncation of Julian values to four places after
   the decimal point in a "RESTRICTIONS" section in the manpage
+- Address timezone issues somewhere in the manpage

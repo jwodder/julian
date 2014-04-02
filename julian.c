@@ -48,7 +48,7 @@ void printOldStyle(int jdays, int jsecs);
 
 int main(int argc, char** argv) {
  int ch;
- bool verbose = false;
+ bool verbose = false, errored = false;
  int oldStyle = 0;
  while ((ch = getopt(argc, argv, "oOv")) != -1) {
   switch (ch) {
@@ -78,6 +78,7 @@ int main(int argc, char** argv) {
    int leading = (int) strtol(argv[i], &endp, 10);
    if (endp == argv[i]) {
     fprintf(stderr, "%s: %s: invalid argument\n", argv[0], argv[i]);
+    errored = true;
     continue;
    }
 
@@ -96,6 +97,7 @@ int main(int argc, char** argv) {
      when = unbreakDays(year, tm_when.tm_mon+1, tm_when.tm_mday);
     } else {
      fprintf(stderr, "%s: %s: invalid argument\n", argv[0], argv[i]);
+     errored = true;
      continue;
     }
     if (verbose) {
@@ -118,6 +120,7 @@ int main(int argc, char** argv) {
      jsecs = (int) strtol(endp, &endp2, 10);
      if (endp2 == endp || *endp2 != '\0') {
       fprintf(stderr, "%s: %s: invalid argument\n", argv[0], argv[i]);
+      errored = true;
       continue;
      }
      int digits = endp2 - endp;
@@ -144,10 +147,13 @@ int main(int argc, char** argv) {
     }
     putchar('\n');
 
-   } else {fprintf(stderr, "%s: %s: invalid argument\n", argv[0], argv[i]); }
+   } else {
+    fprintf(stderr, "%s: %s: invalid argument\n", argv[0], argv[i]);
+    errored = true;
+   }
   }
  }
- return 0;
+ return errored ? 2 : 0;
 }
 
 struct yds now(void) {
