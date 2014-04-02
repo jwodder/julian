@@ -7,7 +7,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#define JS_PRECISION  5
+#define JS_PRECISION  4
 
 #define MIN       60
 #define HOUR      (60 * MIN)
