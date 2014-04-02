@@ -1,12 +1,21 @@
-- Write a manpage
-
 - Add automated testing of O.S. date output
 - Test more negative Julian dates
 
+- Handle all of the sections marked "TODO" in the code
 - Add a switch for setting the precision of Julian date output
 - Add an option for setting the date of the Reformation (affecting input or
   just output?)
 - Make dates beginning with minus signs be recognized as such rather than as
   invalid options
+- If an error message is printed, the exit status should be nonzero.
+- Get rid of `-q` and have "old-value = " fields only be output when a `-v`
+  option is given
+- Represent seconds as floats?
+- Add an option for printing calendar dates as YYYY-DDD, the latter part being
+  the yday, starting at 001
+- Implement input & output of proleptic Gregorian dates (ISO 8601 seems to
+  require using them...)
+- Add an option for converting between the Julian & Gregorian calendars?
 
-- Handle all of the sections marked "TODO" in the code
+- Mention rounding errors and truncation of Julian values to four places after
+  the decimal point in a "RESTRICTIONS" section in the manpage

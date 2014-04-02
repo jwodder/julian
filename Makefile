@@ -3,10 +3,10 @@
 CC = gcc
 CFLAGS = -std=c99 -O2 -Wall
 
-all : julian
+all : julian julian.1
 
 julian : julian.c
 	$(CC) $(CFLAGS) -o julian julian.c
 
-#julian.1 : julian.pod
-#	pod2man -c '' -r '' julian.pod julian.1
+julian.1 : julian.pod
+	pod2man -c '' -r '' julian.pod julian.1

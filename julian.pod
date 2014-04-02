@@ -1,0 +1,60 @@
+=pod
+
+=head1 NAME
+
+B<julian> - convert Julian dates to & from calendar dates
+
+=head1 SYNOPSIS
+
+B<julian> [B<-O> | B<-o>] [B<-q>] [I<date> ...]
+
+=head1 DESCRIPTION
+
+When not passed any arguments on the command line, B<julian> outputs the
+current Julian date (the number of days since 4713 BC Jan 1) and exits.
+
+When passed one or more arguments, B<julian> converts each calendar date on the
+command line to a Julian date & each Julian date to a calendar date and outputs
+the results in order.
+
+Julian dates are read & output as base-10 numbers with optional fractional
+parts.
+
+Calendar dates are read & output in a subset of ISO 8601 format: a
+C<YYYY-MM-DD> string (with an optional C<+> or C<-> prepended to the year)
+specifying a date, optionally followed by C<T> and a C<hh:mm:ss> string
+specifying a time.  A year value of 0 corresponds to 1 BC, a year value of -1
+corresponds to 2 BC, and so forth.
+
+This program uses 1582 Oct 5/15 (JD 2299161) as the date of the Gregorian
+Reformation when handling calendar dates.  All dates before this point use the
+Julian calendar, and all dates after use the Gregorian.  An input date in the
+range 1582 Oct 5-14 is assumed to still be on the Julian calendar.
+
+=head1 OPTIONS
+
+=over
+
+=item B<-O>
+
+All calendar dates after the Gregorian Reformation of 1582 will have the
+corresponding "Old Style" (Julian calendar) date appended to their output in
+brackets.
+
+=item B<-o>
+
+Calendar dates between the Gregorian Reformation of 1582 and the UK's adoption
+of the Gregorian reforms in 1752 will have the corresponding "Old Style"
+(Julian calendar) date appended to their output in brackets.
+
+=item B<-q>
+
+Output will be quiet(er), emitting only the converted date.
+
+=back
+
+=head1 AUTHOR
+
+John T. Wodder II <jwodder@sdf.lonestar.org>
+
+=cut
