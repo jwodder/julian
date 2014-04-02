@@ -17,7 +17,7 @@ print $success + $failure, " tests: $success successes, $failure failures\n";
 
 sub test($$) {
  my($in, $goodOut) = @_;
- my $outOut = `$program -q -- $in`;
+ my $outOut = `$program -- $in`;
  chomp $outOut;
  if ($goodOut eq $outOut) { $success++ }
  else {

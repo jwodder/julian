@@ -6,7 +6,7 @@ B<julian> - convert Julian dates to & from calendar dates
 
 =head1 SYNOPSIS
 
-B<julian> [B<-O> | B<-o>] [B<-q>] [I<date> ...]
+B<julian> [B<-O> | B<-o>] [B<-v>] [I<date> ...]
 
 =head1 DESCRIPTION
 
@@ -23,8 +23,8 @@ parts.
 Calendar dates are read & output in a subset of ISO 8601 format: a
 C<YYYY-MM-DD> string (with an optional C<+> or C<-> prepended to the year)
 specifying a date, optionally followed by C<T> and a C<hh:mm:ss> string
-specifying a time.  A year value of 0 corresponds to 1 BC, a year value of -1
-corresponds to 2 BC, and so forth.
+specifying a time in UTC.  A year value of 0 corresponds to 1 BC, a year value
+of -1 corresponds to 2 BC, and so forth.
 
 This program uses 1582 Oct 5/15 (JD 2299161) as the date of the Gregorian
 Reformation when handling calendar dates.  All dates before this point use the
@@ -47,9 +47,9 @@ Calendar dates between the Gregorian Reformation of 1582 and the UK's adoption
 of the Gregorian reforms in 1752 will have the corresponding "Old Style"
 (Julian calendar) date appended to their output in brackets.
 
-=item B<-q>
+=item B<-v>
 
-Output will be quiet(er), emitting only the converted date.
+Print out the input date and C< = > before each respective output date.
 
 =back
 

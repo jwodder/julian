@@ -133,7 +133,7 @@
 \&\fBjulian\fR \- convert Julian dates to & from calendar dates
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
-\&\fBjulian\fR [\fB\-O\fR | \fB\-o\fR] [\fB\-q\fR] [\fIdate\fR ...]
+\&\fBjulian\fR [\fB\-O\fR | \fB\-o\fR] [\fB\-v\fR] [\fIdate\fR ...]
 .SH "DESCRIPTION"
 .IX Header "DESCRIPTION"
 When not passed any arguments on the command line, \fBjulian\fR outputs the
@@ -149,8 +149,8 @@ parts.
 Calendar dates are read & output in a subset of \s-1ISO\s0 8601 format: a
 \&\f(CW\*(C`YYYY\-MM\-DD\*(C'\fR string (with an optional \f(CW\*(C`+\*(C'\fR or \f(CW\*(C`\-\*(C'\fR prepended to the year)
 specifying a date, optionally followed by \f(CW\*(C`T\*(C'\fR and a \f(CW\*(C`hh:mm:ss\*(C'\fR string
-specifying a time.  A year value of 0 corresponds to 1 \s-1BC\s0, a year value of \-1
-corresponds to 2 \s-1BC\s0, and so forth.
+specifying a time in \s-1UTC\s0.  A year value of 0 corresponds to 1 \s-1BC\s0, a year value
+of \-1 corresponds to 2 \s-1BC\s0, and so forth.
 .PP
 This program uses 1582 Oct 5/15 (\s-1JD\s0 2299161) as the date of the Gregorian
 Reformation when handling calendar dates.  All dates before this point use the
@@ -168,9 +168,9 @@ brackets.
 Calendar dates between the Gregorian Reformation of 1582 and the \s-1UK\s0's adoption
 of the Gregorian reforms in 1752 will have the corresponding \*(L"Old Style\*(R"
 (Julian calendar) date appended to their output in brackets.
-.IP "\fB\-q\fR" 4
-.IX Item "-q"
-Output will be quiet(er), emitting only the converted date.
+.IP "\fB\-v\fR" 4
+.IX Item "-v"
+Print out the input date and \f(CW\*(C` = \*(C'\fR before each respective output date.
 .SH "AUTHOR"
 .IX Header "AUTHOR"
 John T. Wodder \s-1II\s0 <jwodder@sdf.lonestar.org>

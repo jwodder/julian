@@ -48,15 +48,15 @@ void printOldStyle(int jdays, int jsecs);
 
 int main(int argc, char** argv) {
  int ch;
- bool quiet = false;
+ bool verbose = false;
  int oldStyle = 0;
- while ((ch = getopt(argc, argv, "qoO")) != -1) {
+ while ((ch = getopt(argc, argv, "oOv")) != -1) {
   switch (ch) {
-   case 'q': quiet = true; break;
    case 'o': oldStyle = 1; break;
    case 'O': oldStyle = 2; break;
+   case 'v': verbose = true; break;
    default:
-    fprintf(stderr, "Usage: %s [-oOq] [date ...]\n", argv[0]);
+    fprintf(stderr, "Usage: %s [-oOv] [date ...]\n", argv[0]);
     return 2;
   }
  }
@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
  argv += optind;
  if (argc == 0) {
   struct yds nowest = now();
-  if (!quiet) {
+  if (verbose) {
    printYDS(nowest);
    printf(" = ");
   }
@@ -98,7 +98,7 @@ int main(int argc, char** argv) {
      fprintf(stderr, "%s: %s: invalid argument\n", argv[0], argv[i]);
      continue;
     }
-    if (!quiet) {
+    if (verbose) {
      printYDS(when);
      printf(" = ");
     }
@@ -130,7 +130,7 @@ int main(int argc, char** argv) {
      jsecs *= DAY;
      for (int j=0; j < digits; j++) jsecs /= 10;
     }
-    if (!quiet) {
+    if (verbose) {
      printJulian(jdays, jsecs, JS_PRECISION);
      printf(" = ");
     }
