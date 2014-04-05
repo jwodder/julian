@@ -46,17 +46,21 @@ void printYDS(struct yds when);
 void printJulian(int jdays, int jsecs, int places);
 void printOldStyle(int jdays, int jsecs);
 
+bool printYday = false;
+
 int main(int argc, char** argv) {
  int ch;
  bool verbose = false, errored = false;
  int oldStyle = 0;
- while ((ch = getopt(argc, argv, "oOv")) != -1) {
+ char* argv0 = argv[0];
+ while ((ch = getopt(argc, argv, "oOvy")) != -1) {
   switch (ch) {
    case 'o': oldStyle = 1; break;
    case 'O': oldStyle = 2; break;
    case 'v': verbose = true; break;
+   case 'y': printYday = true; break;
    default:
-    fprintf(stderr, "Usage: %s [-oOv] [date ...]\n", argv[0]);
+    fprintf(stderr, "Usage: %s [-oOvy] [date ...]\n", argv[0]);
     return 2;
   }
  }
@@ -77,7 +81,7 @@ int main(int argc, char** argv) {
    char* endp;
    int leading = (int) strtol(argv[i], &endp, 10);
    if (endp == argv[i]) {
-    fprintf(stderr, "%s: %s: invalid argument\n", argv[0], argv[i]);
+    fprintf(stderr, "%s: %s: invalid argument\n", argv0, argv[i]);
     errored = true;
     continue;
    }
@@ -96,7 +100,7 @@ int main(int argc, char** argv) {
     } else if (strptime(endp, "-%m-%d", &tm_when)) {
      when = unbreakDays(year, tm_when.tm_mon+1, tm_when.tm_mday);
     } else {
-     fprintf(stderr, "%s: %s: invalid argument\n", argv[0], argv[i]);
+     fprintf(stderr, "%s: %s: invalid argument\n", argv0, argv[i]);
      errored = true;
      continue;
     }
@@ -119,7 +123,7 @@ int main(int argc, char** argv) {
      char* endp2;
      jsecs = (int) strtol(endp, &endp2, 10);
      if (endp2 == endp || *endp2 != '\0') {
-      fprintf(stderr, "%s: %s: invalid argument\n", argv[0], argv[i]);
+      fprintf(stderr, "%s: %s: invalid argument\n", argv0, argv[i]);
       errored = true;
       continue;
      }
@@ -148,7 +152,7 @@ int main(int argc, char** argv) {
     putchar('\n');
 
    } else {
-    fprintf(stderr, "%s: %s: invalid argument\n", argv[0], argv[i]);
+    fprintf(stderr, "%s: %s: invalid argument\n", argv0, argv[i]);
     errored = true;
    }
   }
@@ -310,9 +314,13 @@ void julian2julian(int jdays, int* year, int* yday) {
 
 void printYDS(struct yds when) {
  int month, mday;
- breakDays(when.year, when.days, &month, &mday);
- /* TODO: Check return value! */
- printf("%.4d-%02d-%02d", when.year, month, mday);
+ if (printYday) {
+  printf("%.4d-%03d", when.year, when.days+1);
+ } else {
+  breakDays(when.year, when.days, &month, &mday);
+  /* TODO: Check return value! */
+  printf("%.4d-%02d-%02d", when.year, month, mday);
+ }
  if (when.secs >= 0) {
   int hour, min, sec;
   breakSeconds(when.secs, &hour, &min, &sec);
@@ -340,17 +348,21 @@ void printOldStyle(int jdays, int jsecs) {
  if (secs > DAY) {secs -= DAY; jdays++; }
  int year, yday;
  julian2julian(jdays, &year, &yday);
- int month=0, mday=0;
- for (int i=0; i<12; i++) {
-  int length = months[i];
-  if (i == 1 && year % 4 == 0) length++;
-  if (yday < length) {
-   month = i+1;
-   mday = yday+1;
-   break;
-  } else {yday -= length; }
- }
- printf("O.S. %.4d-%02d-%02d", year, month, mday);
+ if (printYday) {
+  printf("O.S. %.4d-%03d", year, yday+1);
+ } else {
+  int month=0, mday=0;
+  for (int i=0; i<12; i++) {
+   int length = months[i];
+   if (i == 1 && year % 4 == 0) length++;
+   if (yday < length) {
+    month = i+1;
+    mday = yday+1;
+    break;
+   } else {yday -= length; }
+  }
+  printf("O.S. %.4d-%02d-%02d", year, month, mday);
+ } 
  if (secs >= 0) {
   int hour, min, sec;
   breakSeconds(secs, &hour, &min, &sec);
