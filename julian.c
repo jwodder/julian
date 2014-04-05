@@ -53,14 +53,14 @@ int main(int argc, char** argv) {
  bool verbose = false, errored = false;
  int oldStyle = 0;
  char* argv0 = argv[0];
- while ((ch = getopt(argc, argv, "oOvy")) != -1) {
+ while ((ch = getopt(argc, argv, "jOov")) != -1) {
   switch (ch) {
+   case 'j': printYday = true; break;
    case 'o': oldStyle = 1; break;
    case 'O': oldStyle = 2; break;
    case 'v': verbose = true; break;
-   case 'y': printYday = true; break;
    default:
-    fprintf(stderr, "Usage: %s [-oOvy] [date ...]\n", argv[0]);
+    fprintf(stderr, "Usage: %s [-O | -o] [-jv] [date ...]\n", argv[0]);
     return 2;
   }
  }

@@ -133,15 +133,15 @@
 \&\fBjulian\fR \- convert Julian dates to & from calendar dates
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
-\&\fBjulian\fR [\fB\-O\fR | \fB\-o\fR] [\fB\-vy\fR] [\fIdate\fR ...]
+\&\fBjulian\fR [\fB\-O\fR | \fB\-o\fR] [\fB\-jv\fR] [\fIdate\fR ...]
 .SH "DESCRIPTION"
 .IX Header "DESCRIPTION"
 When not passed any arguments on the command line, \fBjulian\fR outputs the
 current Julian date (the number of days since 4713 \s-1BC\s0 Jan 1) and exits.
 .PP
 When passed one or more arguments, \fBjulian\fR converts each calendar date on the
-command line to a Julian date & each Julian date to a calendar date and outputs
-the results in order.
+command line to a Julian date and each Julian date to a calendar date,
+outputting the results.
 .PP
 Julian dates are read & output as base\-10 numbers with optional fractional
 parts.
@@ -161,6 +161,10 @@ date in the range 1582 Oct 5\-14 is assumed to still be on the Julian calendar.
 January 1 is always used as the start of the year.
 .SH "OPTIONS"
 .IX Header "OPTIONS"
+.IP "\fB\-j\fR" 4
+.IX Item "-j"
+Calendar dates will be output in the form \f(CW\*(C`YYYY\-DDD\*(C'\fR, where the latter
+component is the day of the year from 001 to 366.
 .IP "\fB\-O\fR" 4
 .IX Item "-O"
 All calendar dates after the Gregorian Reformation of 1582 will have the
@@ -173,11 +177,8 @@ of the Gregorian reforms in 1752 will have the corresponding \*(L"Old Style\*(R"
 (Julian calendar) date appended to their output in brackets.
 .IP "\fB\-v\fR" 4
 .IX Item "-v"
-Print out the input date and \f(CW\*(C` = \*(C'\fR before each respective output date.
-.IP "\fB\-y\fR" 4
-.IX Item "-y"
-Calendar dates will be output in the form \f(CW\*(C`YYYY\-DDD\*(C'\fR, where the latter
-component is the day of the year from 001 to 366.
+Be verbose, i.e., print out the input date and \f(CW\*(C` = \*(C'\fR before each respective
+output date.
 .SH "AUTHOR"
 .IX Header "AUTHOR"
 John T. Wodder \s-1II\s0 <jwodder@sdf.lonestar.org>

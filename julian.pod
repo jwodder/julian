@@ -6,7 +6,7 @@ B<julian> - convert Julian dates to & from calendar dates
 
 =head1 SYNOPSIS
 
-B<julian> [B<-O> | B<-o>] [B<-vy>] [I<date> ...]
+B<julian> [B<-O> | B<-o>] [B<-jv>] [I<date> ...]
 
 =head1 DESCRIPTION
 
@@ -14,8 +14,8 @@ When not passed any arguments on the command line, B<julian> outputs the
 current Julian date (the number of days since 4713 BC Jan 1) and exits.
 
 When passed one or more arguments, B<julian> converts each calendar date on the
-command line to a Julian date & each Julian date to a calendar date and outputs
-the results in order.
+command line to a Julian date and each Julian date to a calendar date,
+outputting the results.
 
 Julian dates are read & output as base-10 numbers with optional fractional
 parts.
@@ -38,6 +38,11 @@ January 1 is always used as the start of the year.
 
 =over
 
+=item B<-j>
+
+Calendar dates will be output in the form C<YYYY-DDD>, where the latter
+component is the day of the year from 001 to 366.
+
 =item B<-O>
 
 All calendar dates after the Gregorian Reformation of 1582 will have the
@@ -52,12 +57,8 @@ of the Gregorian reforms in 1752 will have the corresponding "Old Style"
 
 =item B<-v>
 
-Print out the input date and C< = > before each respective output date.
-
-=item B<-y>
-
-Calendar dates will be output in the form C<YYYY-DDD>, where the latter
-component is the day of the year from 001 to 366.
+Be verbose, i.e., print out the input date and C< = > before each respective
+output date.
 
 =back
 

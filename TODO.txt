@@ -1,6 +1,6 @@
 - Add automated testing of O.S. date output
 - Test more negative Julian dates
-- Add automated testing of the -y option?
+- Add automated testing of YYYY-DDD input & output?
 
 - Handle all of the sections marked "TODO" in the code
 - Add a switch for setting the precision of Julian date output
@@ -14,13 +14,11 @@
   require using them...)
 - Add an option for converting between the Julian & Gregorian calendars?
 - Add an option for printing the input date but not the converted date; when
-  combined with `-y` (or lack thereof) and options for dealing with proleptic
+  combined with `-j` (or lack thereof) and options for dealing with proleptic
   Gregorian calendars, this can be used to convert between calendars and
   calendar date representations
 - Should the `-o` and `-O` options affect echoing of the input date with `-v`
   as well?  If not, this should be pointed out in the manpage.
-- Rename `-y` to `-j` for consistency with the `%j` `strftime` conversion
-  specifier and the `-j` option to `cal`
 
 - Mention rounding errors and truncation of Julian values to four places after
   the decimal point in a "RESTRICTIONS" section in the manpage
