@@ -30,17 +30,17 @@ const int months[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 struct yds now(void);
 
 bool isLeap(int year);
-int daysSince1582(int year);
-int yearLength(int year);
+int  daysSince1582(int year);
+int  yearLength(int year);
 bool beforeGregorian(struct yds when);
 
-bool breakDays(int year, int days, int* month, int* mday);
+bool       breakDays(int year, int days, int* month, int* mday);
 struct yds unbreakDays(int year, int month, int mday);
-bool breakSeconds(int secs, int* hour, int* min, int* sec);
+bool       breakSeconds(int secs, int* hour, int* min, int* sec);
 
-void toJulianDate(struct yds when, int* jdays, int* jsecs);
+void       toJulianDate(struct yds when, int* jdays, int* jsecs);
 struct yds fromJulianDate(int jdays, int jsecs);
-void julian2julian(int jdays, int* year, int* yday);
+void       julian2julian(int jdays, int* year, int* yday);
 
 void printYDS(struct yds when);
 void printJulian(int jdays, int jsecs, int places);
@@ -93,16 +93,27 @@ int main(int argc, char** argv) {
     int year = leading;
     struct tm tm_when;
     struct yds when;
+    char* endp2;
     /* Should the calls to strptime care about trailing characters in str? */
-    if (strptime(endp, "-%m-%d T %H:%M:%S", &tm_when)) {
+    if ((endp2 = strptime(endp, "-%m-%d", &tm_when)) != NULL) {
      when = unbreakDays(year, tm_when.tm_mon+1, tm_when.tm_mday);
-     when.secs = tm_when.tm_hour * HOUR + tm_when.tm_min * MIN + tm_when.tm_sec;
-    } else if (strptime(endp, "-%m-%d", &tm_when)) {
-     when = unbreakDays(year, tm_when.tm_mon+1, tm_when.tm_mday);
+    } else if ((endp2 = strptime(endp, "-%j", &tm_when)) != NULL) {
+     when.year = year;
+     when.days = tm_when.tm_yday;
+     when.secs = -1;
+     if (when.days >= yearLength(year)) {
+      fprintf(stderr, "%s: yday value %d out of rage for year %d\n",
+	      argv0, when.days, year);
+      errored = true;
+      continue;
+     }
     } else {
      fprintf(stderr, "%s: %s: invalid argument\n", argv0, argv[i]);
      errored = true;
      continue;
+    }
+    if (strptime(endp2, "T %H:%M:%S", &tm_when)) {
+     when.secs = tm_when.tm_hour * HOUR + tm_when.tm_min * MIN + tm_when.tm_sec;
     }
     if (verbose) {
      printYDS(when);
