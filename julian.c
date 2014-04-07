@@ -34,7 +34,7 @@ int  daysSince1582(int year);
 int  yearLength(int year);
 bool beforeGregorian(struct yds when);
 
-bool       breakDays(int year, int days, int* month, int* mday);
+bool       breakDays(int days, int leap, int* month, int* mday);
 struct yds unbreakDays(int year, int month, int mday);
 bool       breakSeconds(int secs, int* hour, int* min, int* sec);
 
@@ -174,12 +174,11 @@ int main(int argc, char** argv) {
 struct yds now(void) {
  time_t now0 = time(NULL);
  struct tm* nower = gmtime(&now0);
- struct yds nowest = {
+ return (struct yds) {
   .year = nower->tm_year + 1900,
   .days = nower->tm_yday,
   .secs = nower->tm_hour * HOUR + nower->tm_min * MIN + nower->tm_sec,
  };
- return nowest;
 }
 
 bool isLeap(int year) {
@@ -203,13 +202,14 @@ bool beforeGregorian(struct yds when) {
  return when.year < 1582 || (when.year == 1582 && when.days < YDAY_REFORM);
 }
 
-bool breakDays(int year, int days, int* month, int* mday) {
+bool breakDays(int days, int leap, int* month, int* mday) {
  /* `month` and `mday` will start at 1. */
+ /* `leap` is 0 for non-leap years, 1 for leap years, and -1 for 1582. */
  if (days < 0) return false;
  for (int i=0; i<12; i++) {
   int length = months[i];
-  if (i == 1 && isLeap(year)) length++;
-  if (year == 1582 && i == 9) {
+  if (leap == 1 && i == 1) length++;
+  else if (leap == -1 && i == 9) {
    length = 21;
    if (days < length) {
     *month = 10;
@@ -324,11 +324,11 @@ void julian2julian(int jdays, int* year, int* yday) {
 }
 
 void printYDS(struct yds when) {
- int month, mday;
  if (printYday) {
   printf("%.4d-%03d", when.year, when.days+1);
  } else {
-  breakDays(when.year, when.days, &month, &mday);
+  int month, mday;
+  breakDays(when.days, when.year==1582 ? -1 : isLeap(when.year), &month, &mday);
   /* TODO: Check return value! */
   printf("%.4d-%02d-%02d", when.year, month, mday);
  }
@@ -362,16 +362,9 @@ void printOldStyle(int jdays, int jsecs) {
  if (printYday) {
   printf("O.S. %.4d-%03d", year, yday+1);
  } else {
-  int month=0, mday=0;
-  for (int i=0; i<12; i++) {
-   int length = months[i];
-   if (i == 1 && year % 4 == 0) length++;
-   if (yday < length) {
-    month = i+1;
-    mday = yday+1;
-    break;
-   } else {yday -= length; }
-  }
+  int month, mday;
+  breakDays(yday, year % 4 == 0, &month, &mday);
+  /* TODO: Check return value! */
   printf("O.S. %.4d-%02d-%02d", year, month, mday);
  } 
  if (secs >= 0) {
