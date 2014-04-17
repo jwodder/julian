@@ -124,7 +124,7 @@
 .\" ========================================================================
 .\"
 .IX Title "JULIAN 1"
-.TH JULIAN 1 "2014-04-05" "" ""
+.TH JULIAN 1 "2014-04-17" "" ""
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -137,7 +137,8 @@
 .SH "DESCRIPTION"
 .IX Header "DESCRIPTION"
 When not passed any arguments on the command line, \fBjulian\fR outputs the
-current Julian date (the number of days since 4713 \s-1BC\s0 Jan 1) and exits.
+current Julian date (the number of days since noon \s-1UTC\s0 on 4713 \s-1BC\s0 Jan 1) and
+exits.
 .PP
 When passed one or more arguments, \fBjulian\fR converts each calendar date on the
 command line to a Julian date and each Julian date to a calendar date,
@@ -149,10 +150,12 @@ parts.
 Calendar dates are read & output in a subset of \s-1ISO\s0 8601 format: a
 \&\f(CW\*(C`YYYY\-MM\-DD\*(C'\fR string (with an optional \f(CW\*(C`+\*(C'\fR or \f(CW\*(C`\-\*(C'\fR prepended to the year)
 specifying a day, optionally followed by \f(CW\*(C`T\*(C'\fR and a \f(CW\*(C`hh:mm:ss\*(C'\fR string
-specifying a time in \s-1UTC\s0.  (A year value of 0 corresponds to 1 \s-1BC\s0, a year value
-of \-1 corresponds to 2 \s-1BC\s0, and so forth.)  The day may alternatively be
-specified as \f(CW\*(C`YYYY\-DDD\*(C'\fR, where the second component is the day of the year
-from 001 to 366.
+specifying a time in \s-1UTC\s0; any further characters are ignored.  (A \f(CW\*(C`Z\*(C'\fR is also
+appended to time values on output to make the use of \s-1UTC\s0 explicit, but this is
+not required on input.)  The day may alternatively be specified as \f(CW\*(C`YYYY\-DDD\*(C'\fR,
+where the second component is the day of the year from 001 to 366.  In both
+forms, a year value of 0 corresponds to 1 \s-1BC\s0, a year value of \-1 corresponds to
+2 \s-1BC\s0, and so forth.
 .PP
 This program uses 1582 Oct 5/15 (\s-1JD\s0 2299161) as the date of the Gregorian
 Reformation when handling calendar dates.  All dates before this point use the
@@ -179,6 +182,15 @@ of the Gregorian reforms in 1752 will have the corresponding \*(L"Old Style\*(R"
 .IX Item "-v"
 Be verbose, i.e., print out the input date and \f(CW\*(C` = \*(C'\fR before each respective
 output date.
+.SH "RESTRICTIONS"
+.IX Header "RESTRICTIONS"
+Because the decimal representation of 1/86400 (the fraction of a day for which
+a second lasts) does not terminate in base 10, various time values cannot be
+represented exactly with Julian dates.  Moreover, for internal implementation
+reasons, \fBjulian\fR must limit input & output of Julian dates to four places
+after the decimal point.  Converting between a Julian date & calendar date and
+back again may thus result in a difference of up to 9 seconds (about 0.0001
+days).
 .SH "AUTHOR"
 .IX Header "AUTHOR"
 John T. Wodder \s-1II\s0 <jwodder@sdf.lonestar.org>

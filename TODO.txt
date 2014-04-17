@@ -19,7 +19,7 @@
   calendar date representations
 - Should the `-o` and `-O` options affect echoing of the input date with `-v`
   as well?  If not, this should be pointed out in the manpage.
+- Detect out-of-range mdays in input
 
-- Mention rounding errors and truncation of Julian values to four places after
-  the decimal point in a "RESTRICTIONS" section in the manpage
 - Address timezone issues somewhere in the manpage?
+- Link to the GitHub repository somewhere in the manpage

@@ -11,7 +11,8 @@ B<julian> [B<-O> | B<-o>] [B<-jv>] [I<date> ...]
 =head1 DESCRIPTION
 
 When not passed any arguments on the command line, B<julian> outputs the
-current Julian date (the number of days since 4713 BC Jan 1) and exits.
+current Julian date (the number of days since noon UTC on 4713 BC Jan 1) and
+exits.
 
 When passed one or more arguments, B<julian> converts each calendar date on the
 command line to a Julian date and each Julian date to a calendar date,
@@ -23,10 +24,12 @@ parts.
 Calendar dates are read & output in a subset of ISO 8601 format: a
 C<YYYY-MM-DD> string (with an optional C<+> or C<-> prepended to the year)
 specifying a day, optionally followed by C<T> and a C<hh:mm:ss> string
-specifying a time in UTC.  (A year value of 0 corresponds to 1 BC, a year value
-of -1 corresponds to 2 BC, and so forth.)  The day may alternatively be
-specified as C<YYYY-DDD>, where the second component is the day of the year
-from 001 to 366.
+specifying a time in UTC; any further characters are ignored.  (A C<Z> is also
+appended to time values on output to make the use of UTC explicit, but this is
+not required on input.)  The day may alternatively be specified as C<YYYY-DDD>,
+where the second component is the day of the year from 001 to 366.  In both
+forms, a year value of 0 corresponds to 1 BC, a year value of -1 corresponds to
+2 BC, and so forth.
 
 This program uses 1582 Oct 5/15 (JD 2299161) as the date of the Gregorian
 Reformation when handling calendar dates.  All dates before this point use the
@@ -61,6 +64,16 @@ Be verbose, i.e., print out the input date and C< = > before each respective
 output date.
 
 =back
+
+=head1 RESTRICTIONS
+
+Because the decimal representation of 1/86400 (the fraction of a day for which
+a second lasts) does not terminate in base 10, various time values cannot be
+represented exactly with Julian dates.  Moreover, for internal implementation
+reasons, B<julian> must limit input & output of Julian dates to four places
+after the decimal point.  Converting between a Julian date & calendar date and
+back again may thus result in a difference of up to 9 seconds (about 0.0001
+days).
 
 =head1 AUTHOR
 
