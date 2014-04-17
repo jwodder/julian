@@ -34,9 +34,9 @@ int  daysSince1582(int year);
 int  yearLength(int year);
 bool beforeGregorian(struct yds when);
 
-bool       breakDays(int days, int leap, int* month, int* mday);
-struct yds unbreakDays(int year, int month, int mday);
-bool       breakSeconds(int secs, int* hour, int* min, int* sec);
+bool breakDays(int days, int leap, int* month, int* mday);
+bool unbreakDays(int year, int month, int mday, struct yds* when);
+bool breakSeconds(int secs, int* hour, int* min, int* sec);
 
 void       toJulianDate(struct yds when, int* jdays, int* jsecs);
 struct yds fromJulianDate(int jdays, int jsecs);
@@ -96,12 +96,19 @@ int main(int argc, char** argv) {
     char* endp2;
     /* Should the calls to strptime care about trailing characters in str? */
     if ((endp2 = strptime(endp, "-%m-%d", &tm_when)) != NULL) {
-     when = unbreakDays(year, tm_when.tm_mon+1, tm_when.tm_mday);
+     int month = tm_when.tm_mon + 1;
+     int mday  = tm_when.tm_mday;
+     if (!unbreakDays(year, month, mday, &when)) {
+      fprintf(stderr, "%s: %.4d-%02d-%02d: invalid date\n",
+	      argv0, year, month, mday);
+      errored = true;
+      continue;
+     }
     } else if ((endp2 = strptime(endp, "-%j", &tm_when)) != NULL) {
      when.year = year;
      when.days = tm_when.tm_yday;
      when.secs = -1;
-     if (when.days >= yearLength(year)) {
+     if (when.days < 0 || when.days >= yearLength(year)) {
       fprintf(stderr, "%s: yday value %d out of rage for year %d\n",
 	      argv0, when.days, year);
       errored = true;
@@ -226,10 +233,12 @@ bool breakDays(int days, int leap, int* month, int* mday) {
  return false;
 }
 
-struct yds unbreakDays(int year, int month, int mday) {
+bool unbreakDays(int year, int month, int mday, struct yds* when) {
  /* `month` and `mday` must start at 1. */
- /* TODO: Should this do anything about invalid dates (e.g., XXXX-04-32)? */
- /* TODO: Handle months over 12. */
+ if (month < 1 || month > 12) return false;
+ if (mday  < 1 || (mday > months[month-1]
+		   && !(isLeap(year) && month == 2 && mday == 29)))
+  return false;
  month--;
  int yday = 0;
  for (int i=0; i<month; i++) {
@@ -240,7 +249,10 @@ struct yds unbreakDays(int year, int month, int mday) {
  if (year == 1582 && (month>9 || (month==9 && mday>=15))) yday -= 10;
  /* If someone enters a date that was skipped by the Gregorian Reformation,
   * just assume it's Old Style. */
- return (struct yds) {.year = year, .days = yday, .secs = -1};
+ when->year = year;
+ when->days = yday;
+ when->secs = -1;
+ return true;
 }
 
 bool breakSeconds(int secs, int* hour, int* min, int* sec) {
