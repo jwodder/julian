@@ -316,11 +316,11 @@ void julian2julian(int jdays, int* year, int* yday) {
  } else {
   *year = (jdays / 1461) * 4;
   *yday = jdays % 1461;
-  if (*yday >= 366) {
-   *yday -= 366;
-   *year += 1 + *yday/365;
-   *yday %= 365;
-  }
+  /* Add a "virtual leap day" to the end of each common year so that *yday can
+   * be divided & modded by 366 evenly: */
+  if (*yday > 365) *yday += (*yday - 366)/365;
+  *year += *yday/366;
+  *yday %= 366;
   *year -= 4712;
  }
 }
