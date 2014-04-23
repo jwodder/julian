@@ -17,6 +17,7 @@
 #define GREG_REFORM  2299161             /* noon on 1582-10-15 */
 #define YDAY_REFORM  277                 /* zero-indexed yday for Oct. 05 */
 #define START1583    (GREG_REFORM + 78)  /* noon on 1583-01-01 */
+#define START1600    2305448             /* noon on 1600-01-01 */
 #define UK_REFORM    2361222             /* noon on 1752-09-14 */
 
 struct yds {
@@ -290,19 +291,24 @@ struct yds fromJulianDate(int jdays, int jsecs) {
  int days = jdays;
  int secs = jsecs >= 0 ? jsecs + HALF_DAY : -1;
  if (secs > DAY) {secs -= DAY; days++; }
- if (days < GREG_REFORM) {
+ if (days < START1600) {
+  if (GREG_REFORM <= days) days += 10;
   int year, yday;
   julian2julian(days, &year, &yday);
+  if (GREG_REFORM <= days && days-10 < START1583) yday -= 10;
   return (struct yds) {.year = year, .days = yday, .secs = secs};
- } else if (days < START1583) {
-  return (struct yds) {.year = 1582, .days = days - GREG_REFORM + YDAY_REFORM,
-		       .secs = secs};
  } else {
-  /* TODO: Make this more efficient. */
-  days -= START1583;
-  int year = days / 365 + 1583;
-  days -= daysSince1582(year);
-  while (days < 0) days += yearLength(--year);
+  days -= START1600;
+  int year = 1600 + (days / 146097) * 400;
+  days %= 146097;
+  /* Add a "virtual leap day" to the end of each non-Gregorian centennial year
+   * so that `days` can then be handled as in the Julian calendar: */
+  if (days > 365) days += (days - 366)/36524;
+  year += (days / 1461) * 4;
+  days %= 1461;
+  if (days > 365) days += (days - 366)/365;
+  year += days/366;
+  days %= 366;
   return (struct yds) {.year = year, .days = days, .secs = secs};
  }
 }
@@ -316,8 +322,8 @@ void julian2julian(int jdays, int* year, int* yday) {
  } else {
   *year = (jdays / 1461) * 4;
   *yday = jdays % 1461;
-  /* Add a "virtual leap day" to the end of each common year so that *yday can
-   * be divided & modded by 366 evenly: */
+  /* Add a "virtual leap day" to the end of each common year so that `*yday`
+   * can be divided & modded by 366 evenly: */
   if (*yday > 365) *yday += (*yday - 366)/365;
   *year += *yday/366;
   *yday %= 366;
