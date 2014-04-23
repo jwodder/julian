@@ -310,18 +310,8 @@ struct yds fromJulianDate(int jdays, int jsecs) {
 void julian2julian(int jdays, int* year, int* yday) {
  /* Convert a Julian date to a year & yday in the Julian calendar */
  if (jdays < 0) {
-  /* TODO: Simplify this. */
-  jdays = -jdays - 1;
-  *year = (jdays / 1461) * 4;
-  *yday = jdays % 1461;
-  if (*yday == 1460) {
-   *year += 3;
-   *yday = 365;
-  } else if (*yday >= 365) {
-   *year += *yday/365;
-   *yday %= 365;
-  }
-  *year = -4713 - *year;
+  julian2julian(365 - jdays, year, yday);
+  *year = -4712 - (*year + 4712);
   *yday = yearLength(*year) - 1 - *yday;
  } else {
   *year = (jdays / 1461) * 4;
@@ -367,6 +357,7 @@ void printJulian(int jdays, int jsecs, int places) {
 }
 
 void printOldStyle(int jdays, int jsecs) {
+ /* TODO: Replace this function with a (modified) call to `printYDS`. */
  int secs = jsecs >= 0 ? jsecs + HALF_DAY : -1;
  if (secs > DAY) {secs -= DAY; jdays++; }
  int year, yday;

@@ -22,3 +22,5 @@
 
 - Address timezone issues somewhere in the manpage?
 - Link to the GitHub repository somewhere in the manpage
+- Add a note to the manpage about Julian days starting at noon and the
+  potential pitfalls resulting from this
