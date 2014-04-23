@@ -43,7 +43,7 @@ void       toJulianDate(struct yds when, int* jdays, int* jsecs);
 struct yds fromJulianDate(int jdays, int jsecs);
 void       julian2julian(int jdays, int* year, int* yday);
 
-void printYDS(struct yds when);
+void printYDS(struct yds when, bool jul);
 void printJulian(int jdays, int jsecs, int places);
 void printOldStyle(int jdays, int jsecs);
 
@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
  if (argc == 0) {
   struct yds nowest = now();
   if (verbose) {
-   printYDS(nowest);
+   printYDS(nowest, false);
    printf(" = ");
   }
   int jd, js;
@@ -124,7 +124,7 @@ int main(int argc, char** argv) {
      when.secs = tm_when.tm_hour * HOUR + tm_when.tm_min * MIN + tm_when.tm_sec;
     }
     if (verbose) {
-     printYDS(when);
+     printYDS(when, false);
      printf(" = ");
     }
     int jd, js;
@@ -161,7 +161,7 @@ int main(int argc, char** argv) {
      printf(" = ");
     }
     struct yds when = fromJulianDate(jdays, jsecs);
-    printYDS(when);
+    printYDS(when, false);
     if (oldStyle && GREG_REFORM <= jdays
 		 && (jdays < UK_REFORM || oldStyle > 1)) {
      printf(" [");
@@ -331,12 +331,16 @@ void julian2julian(int jdays, int* year, int* yday) {
  }
 }
 
-void printYDS(struct yds when) {
+void printYDS(struct yds when, bool jul) {
+ /* `jul` is true iff `when` should be treated as a date in the Julian calendar
+  * rather than reformed Gregorian. */
  if (printYday) {
   printf("%.4d-%03d", when.year, when.days+1);
  } else {
   int month, mday;
-  breakDays(when.days, when.year==1582 ? -1 : isLeap(when.year), &month, &mday);
+  int leap = jul ? when.year % 4 == 0
+		 : when.year == 1582 ? -1 : isLeap(when.year);
+  breakDays(when.days, leap, &month, &mday);
   /* TODO: Check return value! */
   printf("%.4d-%02d-%02d", when.year, month, mday);
  }
@@ -363,23 +367,10 @@ void printJulian(int jdays, int jsecs, int places) {
 }
 
 void printOldStyle(int jdays, int jsecs) {
- /* TODO: Replace this function with a (modified) call to `printYDS`. */
  int secs = jsecs >= 0 ? jsecs + HALF_DAY : -1;
  if (secs > DAY) {secs -= DAY; jdays++; }
  int year, yday;
  julian2julian(jdays, &year, &yday);
- if (printYday) {
-  printf("O.S. %.4d-%03d", year, yday+1);
- } else {
-  int month, mday;
-  breakDays(yday, year % 4 == 0, &month, &mday);
-  /* TODO: Check return value! */
-  printf("O.S. %.4d-%02d-%02d", year, month, mday);
- } 
- if (secs >= 0) {
-  int hour, min, sec;
-  breakSeconds(secs, &hour, &min, &sec);
-  /* TODO: Check return value! */
-  printf("T%02d:%02d:%02dZ", hour, min, sec);
- }
+ printf("O.S. ");
+ printYDS((struct yds) {.year = year, .days = yday, .secs = secs}, true);
 }
