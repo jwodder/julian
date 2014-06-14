@@ -51,15 +51,32 @@ bool printYday = false;
 
 int main(int argc, char** argv) {
  int ch;
- bool verbose = false, errored = false;
+ bool verbose = false, errored = false, endGetoptNow = false;
  int oldStyle = 0;
  char* argv0 = argv[0];
- while ((ch = getopt(argc, argv, "jOov")) != -1) {
+ while (!endGetoptNow && (ch = getopt(argc, argv, "jOov0123456789")) != -1) {
   switch (ch) {
    case 'j': printYday = true; break;
    case 'o': oldStyle = 1; break;
    case 'O': oldStyle = 2; break;
    case 'v': verbose = true; break;
+
+   /* This allows negative Julian dates and YYYY-MM-DD dates with negative
+    * years to be used without getopt mistaking them for switches: */
+   case '0': case '1': case '2': case '3': case '4':
+   case '5': case '6': case '7': case '8': case '9':
+    if (argv[optind-1][0] == '-' && argv[optind-1][1] == ch) {
+     /* If the "previous" argument starts with '-' and a digit, then since no
+      * options take any arguments, it must be the case that the "previous"
+      * argument is actually the current argument and that there are no more
+      * characters after the digit, causing getopt to have already incremented
+      * optind to point to the next argument.  Thus, in order for julian to see
+      * this argument, optind must be decremented. */
+     optind--;
+    }
+    endGetoptNow = true;
+    break;
+
    default:
     fprintf(stderr, "Usage: %s [-O | -o] [-jv] [date ...]\n", argv[0]);
     return 2;

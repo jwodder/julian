@@ -2,14 +2,16 @@
 - Test more negative Julian dates
 - Add automated testing of YYYY-DDD input & output?
 
+- Add a license
+- Add a README
 - Handle all of the sections marked "TODO" in the code
+- Represent seconds as floats?
+- Should the `-o` and `-O` options affect echoing of the input date with `-v`
+  as well?  If not, this should be pointed out in the manpage.
 - Add a switch for setting the precision of Julian date output
 - Add an option for setting the date of the Reformation (affecting input or
   just output?)
 - Add a way to set the stopping point for `-o` O.S. dates
-- Make dates beginning with minus signs be recognized as such rather than as
-  invalid options
-- Represent seconds as floats?
 - Implement input & output of proleptic Gregorian dates (ISO 8601 seems to
   require using them...)
 - Add an option for converting between the Julian & Gregorian calendars?
@@ -17,8 +19,9 @@
   combined with `-j` (or lack thereof) and options for dealing with proleptic
   Gregorian calendars, this can be used to convert between calendars and
   calendar date representations
-- Should the `-o` and `-O` options affect echoing of the input date with `-v`
-  as well?  If not, this should be pointed out in the manpage.
+- Add a way to input & output Julian dates as an integer date with an integer
+  number of seconds?  (e.g., 2456818:50881 as a less roundoff-error-prone
+  alternative to 2456818.5889)
 
 - Address timezone issues somewhere in the manpage?
 - Link to the GitHub repository somewhere in the manpage
