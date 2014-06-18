@@ -43,6 +43,7 @@ void       toJulianDate(struct yds when, int* jdays, int* jsecs);
 struct yds fromJulianDate(int jdays, int jsecs);
 void       julian2julian(int jdays, int* year, int* yday);
 
+void printStyled(struct yds when, int jdays, int jsecs, int oldStyle);
 void printYDS(struct yds when, bool jul);
 void printJulian(int jdays, int jsecs, int places);
 void printOldStyle(int jdays, int jsecs);
@@ -86,12 +87,12 @@ int main(int argc, char** argv) {
  argv += optind;
  if (argc == 0) {
   struct yds nowest = now();
-  if (verbose) {
-   printYDS(nowest, false);
-   printf(" = ");
-  }
   int jd, js;
   toJulianDate(nowest, &jd, &js);
+  if (verbose) {
+   printStyled(nowest, jd, js, oldStyle);
+   printf(" = ");
+  }
   printJulian(jd, js, JS_PRECISION);
   putchar('\n');
  } else {
@@ -140,12 +141,12 @@ int main(int argc, char** argv) {
     if (strptime(endp2, "T %H:%M:%S", &tm_when)) {
      when.secs = tm_when.tm_hour * HOUR + tm_when.tm_min * MIN + tm_when.tm_sec;
     }
-    if (verbose) {
-     printYDS(when, false);
-     printf(" = ");
-    }
     int jd, js;
     toJulianDate(when, &jd, &js);
+    if (verbose) {
+     printStyled(when, jd, js, oldStyle);
+     printf(" = ");
+    }
     printJulian(jd, js, JS_PRECISION);
     putchar('\n');
 
@@ -178,13 +179,7 @@ int main(int argc, char** argv) {
      printf(" = ");
     }
     struct yds when = fromJulianDate(jdays, jsecs);
-    printYDS(when, false);
-    if (oldStyle && GREG_REFORM <= jdays
-		 && (jdays < UK_REFORM || oldStyle > 1)) {
-     printf(" [");
-     printOldStyle(jdays, jsecs);
-     putchar(']');
-    }
+    printStyled(when, jdays, jsecs, oldStyle);
     putchar('\n');
 
    } else {
@@ -348,6 +343,15 @@ void julian2julian(int jdays, int* year, int* yday) {
  }
 }
 
+void printStyled(struct yds when, int jdays, int jsecs, int oldStyle) {
+ printYDS(when, false);
+ if (oldStyle && GREG_REFORM <= jdays && (jdays < UK_REFORM || oldStyle > 1)) {
+  printf(" [");
+  printOldStyle(jdays, jsecs);
+  putchar(']');
+ }
+}
+
 void printYDS(struct yds when, bool jul) {
  /* `jul` is true iff `when` should be treated as a date in the Julian calendar
   * rather than reformed Gregorian. */
@@ -384,6 +388,7 @@ void printJulian(int jdays, int jsecs, int places) {
 }
 
 void printOldStyle(int jdays, int jsecs) {
+ /* TODO: Should this be merged into `printStyled`? */
  int secs = jsecs >= 0 ? jsecs + HALF_DAY : -1;
  if (secs > DAY) {secs -= DAY; jdays++; }
  int year, yday;

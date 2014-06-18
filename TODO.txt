@@ -6,8 +6,6 @@
 - Add a README
 - Handle all of the sections marked "TODO" in the code
 - Represent seconds as floats?
-- Should the `-o` and `-O` options affect echoing of the input date with `-v`
-  as well?  If not, this should be pointed out in the manpage.
 - Add a switch for setting the precision of Julian date output
 - Add an option for setting the date of the Reformation (affecting input or
   just output?)
@@ -19,7 +17,7 @@
   combined with `-j` (or lack thereof) and options for dealing with proleptic
   Gregorian calendars, this can be used to convert between calendars and
   calendar date representations
-- Add a way to input & output Julian dates as an integer date with an integer
+- Add a way to input & output Julian dates as integer dates with an integer
   number of seconds?  (e.g., 2456818:50881 as a less roundoff-error-prone
   alternative to 2456818.5889)
 
