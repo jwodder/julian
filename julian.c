@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>  /* strchr */
 #include <time.h>
 #include <unistd.h>
 
@@ -28,6 +29,8 @@ struct yds {
 
 const int months[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
+void usage(void);
+
 struct yds now(void);
 
 bool isLeap(int year);
@@ -49,12 +52,13 @@ void printJulian(int jdays, int jsecs, int places);
 void printOldStyle(int jdays, int jsecs);
 
 bool printYday = false;
+char* argv0 = NULL;
 
 int main(int argc, char** argv) {
  int ch;
  bool verbose = false, errored = false, endGetoptNow = false;
  int oldStyle = 0;
- char* argv0 = argv[0];
+ argv0 = argv[0];
  while (!endGetoptNow && (ch = getopt(argc, argv, "jOov0123456789")) != -1) {
   switch (ch) {
    case 'j': printYday = true; break;
@@ -66,21 +70,25 @@ int main(int argc, char** argv) {
     * years to be used without getopt mistaking them for switches: */
    case '0': case '1': case '2': case '3': case '4':
    case '5': case '6': case '7': case '8': case '9':
-    if (argv[optind-1][0] == '-' && argv[optind-1][1] == ch) {
-     /* If the "previous" argument starts with '-' and a digit, then since no
-      * options take any arguments, it must be the case that the "previous"
-      * argument is actually the current argument and that there are no more
-      * characters after the digit, causing getopt to have already incremented
-      * optind to point to the next argument.  Thus, in order for julian to see
-      * this argument, optind must be decremented. */
+    if (strchr(argv[optind-1], ch) != NULL) {
+     /* If the "previous" argument contains the digit, then since no options
+      * take any arguments, it must be the case that the "previous" argument is
+      * actually the current argument and that there are no more characters
+      * after the digit, causing getopt to have already incremented optind to
+      * point to the next argument.  Thus, in order for julian to see this
+      * argument, optind must be decremented. */
      optind--;
+    }
+    if (argv[optind][1] != ch) {
+     /* The user appended a number to the end of a normal option bundle. */
+     fprintf(stderr, "%s: %s: invalid options\n", argv0, argv[optind]);
+     usage();
+     return 2;
     }
     endGetoptNow = true;
     break;
 
-   default:
-    fprintf(stderr, "Usage: %s [-O | -o] [-jv] [date ...]\n", argv[0]);
-    return 2;
+   default: usage(); return 2;
   }
  }
  argc -= optind;
@@ -189,6 +197,10 @@ int main(int argc, char** argv) {
   }
  }
  return errored ? 2 : 0;
+}
+
+void usage(void) {
+ fprintf(stderr, "Usage: %s [-O | -o] [-jv] [date ...]\n", argv0);
 }
 
 struct yds now(void) {
