@@ -2,7 +2,6 @@
 - Test more negative Julian dates
 - Add automated testing of YYYY-DDD input & output?
 
-- Add a license
 - Add a README
 - Handle all of the sections marked "TODO" in the code
 - Represent seconds as floats?
