@@ -8,6 +8,8 @@ B<julian> - convert Julian dates to & from calendar dates
 
 B<julian> [B<-O> | B<-o>] [B<-jv>] [I<date> ...]
 
+B<julian> B<-V>
+
 =head1 DESCRIPTION
 
 When not passed any arguments on the command line, B<julian> outputs the
@@ -57,6 +59,10 @@ brackets.
 Calendar dates between the Gregorian Reformation of 1582 and the UK's adoption
 of the Gregorian reforms in 1752 will have the corresponding "Old Style"
 (Julian calendar) date appended to their output in brackets.
+
+=item B<-V>
+
+Display version information and exit
 
 =item B<-v>
 

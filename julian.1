@@ -124,7 +124,7 @@
 .\" ========================================================================
 .\"
 .IX Title "JULIAN 1"
-.TH JULIAN 1 "2014-04-17" "" ""
+.TH JULIAN 1 "2014-06-25" "Version 1.0" ""
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -134,6 +134,8 @@
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
 \&\fBjulian\fR [\fB\-O\fR | \fB\-o\fR] [\fB\-jv\fR] [\fIdate\fR ...]
+.PP
+\&\fBjulian\fR \fB\-V\fR
 .SH "DESCRIPTION"
 .IX Header "DESCRIPTION"
 When not passed any arguments on the command line, \fBjulian\fR outputs the
@@ -178,6 +180,9 @@ brackets.
 Calendar dates between the Gregorian Reformation of 1582 and the \s-1UK\s0's adoption
 of the Gregorian reforms in 1752 will have the corresponding \*(L"Old Style\*(R"
 (Julian calendar) date appended to their output in brackets.
+.IP "\fB\-V\fR" 4
+.IX Item "-V"
+Display version information and exit
 .IP "\fB\-v\fR" 4
 .IX Item "-v"
 Be verbose, i.e., print out the input date and \f(CW\*(C` = \*(C'\fR before each respective

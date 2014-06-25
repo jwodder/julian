@@ -8,6 +8,12 @@
 #include <time.h>
 #include <unistd.h>
 
+const char version[] =
+ "julian -- julian date converter, v.1.0\n"
+ "Copyright (C) 2014 John T. Wodder II <jwodder@sdf.lonestar.org>\n"
+ "julian is distributed under the terms of the MIT License.\n"
+ "See <http://github.com/jwodder/julian> for the latest version.\n";
+
 #define JS_PRECISION  4
 
 #define MIN       60
@@ -59,12 +65,13 @@ int main(int argc, char** argv) {
  bool verbose = false, errored = false, endGetoptNow = false;
  int oldStyle = 0;
  argv0 = argv[0];
- while (!endGetoptNow && (ch = getopt(argc, argv, "jOov0123456789")) != -1) {
+ while (!endGetoptNow && (ch = getopt(argc, argv, "jOovV0123456789")) != -1) {
   switch (ch) {
    case 'j': printYday = true; break;
    case 'o': oldStyle = 1; break;
    case 'O': oldStyle = 2; break;
    case 'v': verbose = true; break;
+   case 'V': fputs(version, stdout); return 0;
 
    /* This allows negative Julian dates and YYYY-MM-DD dates with negative
     * years to be used without getopt mistaking them for switches: */

@@ -9,4 +9,4 @@ julian : julian.c
 	$(CC) $(CFLAGS) -o julian julian.c
 
 julian.1 : julian.pod
-	pod2man -c '' -r '' julian.pod julian.1
+	pod2man -c '' -r 'Version 1.0' julian.pod julian.1
