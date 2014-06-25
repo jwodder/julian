@@ -20,6 +20,7 @@
   number of seconds?  (e.g., 2456818:50881 as a less roundoff-error-prone
   alternative to 2456818.5889)
 - Add an `-h` (help) flag?
+- Check for integer overflow & underflow when calling `strtol`
 
 - Address timezone issues somewhere in the manpage?
 - Add a note to the manpage about Julian days starting at noon and the

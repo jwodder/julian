@@ -35,9 +35,9 @@ forms, a year value of 0 corresponds to 1 BC, a year value of -1 corresponds to
 
 This program uses 1582 Oct 5/15 (JD 2299161) as the date of the Gregorian
 Reformation when handling calendar dates.  All dates before this point use the
-(proleptic) Julian calendar, and all dates after use the Gregorian.  An input
-date in the range 1582 Oct 5-14 is assumed to still be on the Julian calendar.
-January 1 is always used as the start of the year.
+(proleptic) Julian calendar, and all dates on or after use the Gregorian.  An
+input date in the range 1582 Oct 5-14 is assumed to still be on the Julian
+calendar.  January 1 is always used as the start of the year.
 
 =head1 OPTIONS
 
