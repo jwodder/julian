@@ -12,7 +12,7 @@ const char version[] =
  "julian -- julian date converter, v.1.0\n"
  "Copyright (C) 2014 John T. Wodder II <jwodder@sdf.lonestar.org>\n"
  "julian is distributed under the terms of the MIT License.\n"
- "See <http://github.com/jwodder/julian> for the latest version.\n";
+ "See <https://github.com/jwodder/julian> for the latest version.\n";
 
 #define JS_PRECISION  4
 

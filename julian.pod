@@ -85,4 +85,10 @@ days).
 
 John T. Wodder II <jwodder@sdf.lonestar.org>
 
+=head1 SEE ALSO
+
+L<https://github.com/jwodder/julian>
+
+L<https://en.wikipedia.org/wiki/Julian_day>
+
 =cut
