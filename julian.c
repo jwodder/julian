@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <string.h>  /* strchr */
 #include <errno.h>
-#include <limits.h>  /* INT_MIN, INT_MAX */
+#include <limits.h>  /* INT_MAX */
 #include <time.h>
 #include <unistd.h>
 
@@ -193,6 +193,11 @@ int main(int argc, char** argv) {
      }
      jsecs *= DAY;
      for (int j=0; j < digits; j++) jsecs /= 10;
+     if (jdays == INT_MAX && jsecs >= HALF_DAY) {
+      fprintf(stderr, "%s: %s: value too large\n", argv0, argv[i]);
+      errored = true;
+      continue;
+     }
     }
     if (verbose) {
      printJulian(jdays, jsecs, JS_PRECISION);
@@ -221,8 +226,12 @@ bool parseInt(int* i, char* str, char** endp, char* fullarg) {
  if (*endp == str) {
   fprintf(stderr, "%s: %s: invalid argument\n", argv0, fullarg);
   return false;
- } else if (errno == ERANGE || parsed < INT_MIN || parsed > INT_MAX) {
-  fprintf(stderr, "%s: %s: integer outside of valid range\n", argv0, fullarg);
+ } else if (errno == ERANGE || parsed < 365-INT_MAX || parsed > INT_MAX) {
+  /* The `365-INT_MAX` limit is so that julian2julian's behavior of calling
+   * `julian2julian(365 - jdays, year, yday)` when `jdays` is negative will
+   * never result in another extremely negative `jdays` value, which would lead
+   * to an infinite loop. */
+  fprintf(stderr, "%s: %s: value outside of allowed range\n", argv0, fullarg);
   return false;
  } else {
   *i = (int) parsed;

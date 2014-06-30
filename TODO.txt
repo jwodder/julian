@@ -22,8 +22,6 @@
 - Add an `-h` (help) flag?
 - Reject input of any calendar dates that have Julian dates outside an int's
   range
-- It seems that strptime doesn't actually check whether or not, say, a month
-  value is less than 13.  Implement the checks for it.
 
 - Address timezone issues somewhere in the manpage?
 - Add a note to the manpage about Julian days starting at noon and the
