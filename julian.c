@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>  /* strchr */
+#include <errno.h>
+#include <limits.h>  /* INT_MIN, INT_MAX */
 #include <time.h>
 #include <unistd.h>
 
@@ -36,6 +38,7 @@ struct yds {
 const int months[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 void usage(void);
+bool parseInt(int* i, char* str, char** endp, char* fullarg);
 
 struct yds now(void);
 
@@ -113,9 +116,8 @@ int main(int argc, char** argv) {
  } else {
   for (int i=0; i<argc; i++) {
    char* endp;
-   int leading = (int) strtol(argv[i], &endp, 10);
-   if (endp == argv[i]) {
-    fprintf(stderr, "%s: %s: invalid argument\n", argv0, argv[i]);
+   int leading;
+   if (!parseInt(&leading, argv[i], &endp, argv[i])) {
     errored = true;
     continue;
    }
@@ -173,8 +175,11 @@ int main(int argc, char** argv) {
      /* TODO: Improve this part. */
      endp++;
      char* endp2;
-     jsecs = (int) strtol(endp, &endp2, 10);
-     if (endp2 == endp || *endp2 != '\0') {
+     if (!parseInt(&jsecs, endp, &endp2, argv[i])) {
+      errored = true;
+      continue;
+     }
+     if (*endp2 != '\0') {
       fprintf(stderr, "%s: %s: invalid argument\n", argv0, argv[i]);
       errored = true;
       continue;
@@ -208,6 +213,21 @@ int main(int argc, char** argv) {
 
 void usage(void) {
  fprintf(stderr, "Usage: %s [-O | -o] [-jv] [date ...]\n", argv0);
+}
+
+bool parseInt(int* i, char* str, char** endp, char* fullarg) {
+ errno = 0;
+ long parsed = strtol(str, endp, 10);
+ if (*endp == str) {
+  fprintf(stderr, "%s: %s: invalid argument\n", argv0, fullarg);
+  return false;
+ } else if (errno == ERANGE || parsed < INT_MIN || parsed > INT_MAX) {
+  fprintf(stderr, "%s: %s: integer outside of valid range\n", argv0, fullarg);
+  return false;
+ } else {
+  *i = (int) parsed;
+  return true;
+ }
 }
 
 struct yds now(void) {
