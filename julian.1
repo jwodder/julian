@@ -124,7 +124,7 @@
 .\" ========================================================================
 .\"
 .IX Title "JULIAN 1"
-.TH JULIAN 1 "2014-06-25" "Version 1.0" ""
+.TH JULIAN 1 "2014-07-01" "Version 1.0" ""
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -187,15 +187,6 @@ Display version information and exit
 .IX Item "-v"
 Be verbose, i.e., print out the input date and \f(CW\*(C` = \*(C'\fR before each respective
 output date.
-.SH "RESTRICTIONS"
-.IX Header "RESTRICTIONS"
-Because the decimal representation of 1/86400 (the fraction of a day for which
-a second lasts) does not terminate in base 10, various time values cannot be
-represented exactly with Julian dates.  Moreover, for internal implementation
-reasons, \fBjulian\fR must limit input & output of Julian dates to four places
-after the decimal point.  Converting between a Julian date & calendar date and
-back again may thus result in a difference of up to 9 seconds (about 0.0001
-days).
 .SH "AUTHOR"
 .IX Header "AUTHOR"
 John T. Wodder \s-1II\s0 <jwodder@sdf.lonestar.org>

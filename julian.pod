@@ -71,16 +71,6 @@ output date.
 
 =back
 
-=head1 RESTRICTIONS
-
-Because the decimal representation of 1/86400 (the fraction of a day for which
-a second lasts) does not terminate in base 10, various time values cannot be
-represented exactly with Julian dates.  Moreover, for internal implementation
-reasons, B<julian> must limit input & output of Julian dates to four places
-after the decimal point.  Converting between a Julian date & calendar date and
-back again may thus result in a difference of up to 9 seconds (about 0.0001
-days).
-
 =head1 AUTHOR
 
 John T. Wodder II <jwodder@sdf.lonestar.org>
