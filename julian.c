@@ -42,6 +42,11 @@ struct yds {
  int secs;  /* seconds after midnight; negative means ignore the field */
 };
 
+/* These are the calendar dates corresponding to the minimum & maximum allowed
+ * Julian dates when int is 32 bits: */
+struct yds min_date = {.year = -5884201, .days =  75, .secs = HALF_DAY};
+struct yds max_date = {.year =  5874898, .days = 153, .secs = DAY-1};
+
 const int months[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 void usage(void);
@@ -53,6 +58,7 @@ bool isLeap(int year);
 int  daysSince1582(int year);
 int  yearLength(int year);
 bool beforeGregorian(struct yds when);
+int  cmpYDS(struct yds when, struct yds then);
 
 bool breakDays(int days, int leap, int* month, int* mday);
 bool unbreakDays(int year, int month, int mday, struct yds* when);
@@ -167,6 +173,11 @@ int main(int argc, char** argv) {
     if (strptime(endp2, "T %H:%M:%S", &tm_when)) {
      when.secs = tm_when.tm_hour * HOUR + tm_when.tm_min * MIN + tm_when.tm_sec;
     }
+    if (cmpYDS(when, min_date) < 0 || cmpYDS(when, max_date) > 0) {
+     fprintf(stderr, "%s: %s: value outside of allowed range\n",argv0,argv[i]);
+     errored = true;
+     continue;
+    }
     int jd, js;
     toJulianDate(when, &jd, &js);
     if (verbose) {
@@ -195,7 +206,7 @@ int main(int argc, char** argv) {
     }
     if (accum * 2 >= denom) jsecs++;
     if (jdays == INT_MAX && jsecs >= HALF_DAY) {
-     fprintf(stderr, "%s: %s: value too large\n", argv0, argv[i]);
+     fprintf(stderr, "%s: %s: value outside of allowed range\n",argv0,argv[i]);
      errored = true;
      continue;
     }
@@ -304,6 +315,16 @@ int yearLength(int year) {
 
 bool beforeGregorian(struct yds when) {
  return when.year < 1582 || (when.year == 1582 && when.days < YDAY_REFORM);
+}
+
+int cmpYDS(struct yds when, struct yds then) {
+ if (when.year < then.year) return -1;
+ if (when.year > then.year) return  1;
+ if (when.days < then.days) return -1;
+ if (when.days > then.days) return  1;
+ if (when.secs < then.secs) return -1;
+ if (when.secs > then.secs) return  1;
+ return 0;
 }
 
 bool breakDays(int days, int leap, int* month, int* mday) {
