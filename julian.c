@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>  /* strchr */
+#include <ctype.h>  /* isdigit, digittoint */
 #include <errno.h>
 #include <limits.h>  /* INT_MAX */
 #include <time.h>
@@ -16,7 +17,7 @@ const char version[] =
  "julian is distributed under the terms of the MIT License.\n"
  "See <https://github.com/jwodder/julian> for the latest version.\n";
 
-#define JS_PRECISION  4
+#define JS_PRECISION  6
 
 #define MIN       60
 #define HOUR      (60 * MIN)
@@ -172,27 +173,21 @@ int main(int argc, char** argv) {
     int jdays = leading;
     int jsecs = -1;
     if (*endp == '.') {
-     /* TODO: Improve this part. */
-     endp++;
-     char* endp2;
-     if (!parseInt(&jsecs, endp, &endp2, argv[i])) {
-      errored = true;
-      continue;
+     jsecs = 0;
+     int coef = DAY/10, accum = 0, denom = 1;
+     for (endp++; isdigit(*endp); endp++) {
+      accum += coef * digittoint(*endp);
+      jsecs += accum / denom;
+      accum %= denom;
+      if (coef % 10) {accum *= 10; denom *= 10; }
+      else coef /= 10;
      }
-     if (*endp2 != '\0') {
+     if (*endp != '\0') {
       fprintf(stderr, "%s: %s: invalid argument\n", argv0, argv[i]);
       errored = true;
       continue;
      }
-     int digits = endp2 - endp;
-     if (digits > 4) {
-      /* Letting jsecs go over 4 digits will likely lead to overflow when
-       * multiplying by DAY. */
-      for (int j=0; j < digits-4; j++) jsecs /= 10;
-      digits = 4;
-     }
-     jsecs *= DAY;
-     for (int j=0; j < digits; j++) jsecs /= 10;
+     if (accum * 2 >= denom) jsecs++;
      if (jdays == INT_MAX && jsecs >= HALF_DAY) {
       fprintf(stderr, "%s: %s: value too large\n", argv0, argv[i]);
       errored = true;

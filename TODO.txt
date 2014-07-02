@@ -4,13 +4,11 @@
 
 - Add a README
 - Handle all of the sections marked "TODO" in the code
-- Represent seconds as floats?
 - Add a switch for setting the precision of Julian date output
 - Add an option for setting the date of the Reformation (affecting input or
   just output?)
 - Add a way to set the stopping point for `-o` O.S. dates
-- Implement input & output of proleptic Gregorian dates (ISO 8601 seems to
-  require using them...)
+- Implement input & output of proleptic Gregorian dates
 - Add an option for converting between the Julian & Gregorian calendars?
 - Add an option for printing the input date but not the converted date; when
   combined with `-j` (or lack thereof) and options for dealing with proleptic
@@ -23,7 +21,8 @@
 - Reject input of any calendar dates that have Julian dates outside an int's
   range
 
-- Address timezone issues somewhere in the manpage?
 - Add a note to the manpage about Julian days starting at noon and the
   potential pitfalls resulting from this
+- Address timezone issues somewhere in the manpage?
 - Add a license notice to the manpage?
+- Add a note about the allowed range of input values to the manpage?
