@@ -104,6 +104,7 @@ int main(int argc, char** argv) {
  }
  argc -= optind;
  argv += optind;
+
  if (argc == 0) {
   struct yds nowest = now();
   int jd, js;
@@ -114,9 +115,10 @@ int main(int argc, char** argv) {
   }
   printJulian(jd, js, JS_PRECISION);
   putchar('\n');
+
  } else {
   for (int i=0; i<argc; i++) {
-   char* endp;
+   char *endp, *endp2;
    int leading;
    if (!parseInt(&leading, argv[i], &endp, argv[i])) {
     errored = true;
@@ -130,7 +132,6 @@ int main(int argc, char** argv) {
     int year = leading;
     struct tm tm_when;
     struct yds when;
-    char* endp2;
     /* Should the calls to strptime care about trailing characters in str? */
     if ((endp2 = strptime(endp, "-%m-%d", &tm_when)) != NULL) {
      int month = tm_when.tm_mon + 1;
@@ -168,32 +169,58 @@ int main(int argc, char** argv) {
     printJulian(jd, js, JS_PRECISION);
     putchar('\n');
 
-   } else if (*endp == '\0' || *endp == '.') {
-    /* Input is a Julian date; convert it to a calendar date. */
-    int jdays = leading;
-    int jsecs = -1;
-    if (*endp == '.') {
-     jsecs = 0;
-     int coef = DAY/10, accum = 0, denom = 1;
-     for (endp++; isdigit(*endp); endp++) {
-      accum += coef * digittoint(*endp);
-      jsecs += accum / denom;
-      accum %= denom;
-      if (coef % 10) {accum *= 10; denom *= 10; }
-      else coef /= 10;
-     }
-     if (*endp != '\0') {
-      fprintf(stderr, "%s: %s: invalid argument\n", argv0, argv[i]);
-      errored = true;
-      continue;
-     }
-     if (accum * 2 >= denom) jsecs++;
-     if (jdays == INT_MAX && jsecs >= HALF_DAY) {
-      fprintf(stderr, "%s: %s: value too large\n", argv0, argv[i]);
-      errored = true;
-      continue;
-     }
+   } else if (*endp == '.') {
+    /* Input is a Julian date with fractional part; convert it to a calendar
+     * date. */
+    int jdays = leading, jsecs = 0;
+    int coef = DAY/10, accum = 0, denom = 1;
+    for (endp++; isdigit(*endp); endp++) {
+     accum += coef * digittoint(*endp);
+     jsecs += accum / denom;
+     accum %= denom;
+     if (coef % 10) {accum *= 10; denom *= 10; }
+     else coef /= 10;
     }
+    if (*endp != '\0') {
+     fprintf(stderr, "%s: %s: invalid argument\n", argv0, argv[i]);
+     errored = true;
+     continue;
+    }
+    if (accum * 2 >= denom) jsecs++;
+    if (jdays == INT_MAX && jsecs >= HALF_DAY) {
+     fprintf(stderr, "%s: %s: value too large\n", argv0, argv[i]);
+     errored = true;
+     continue;
+    }
+    if (verbose) {
+     printJulian(jdays, jsecs, JS_PRECISION);
+     printf(" = ");
+    }
+    struct yds when = fromJulianDate(jdays, jsecs);
+    printStyled(when, jdays, jsecs, oldStyle);
+    putchar('\n');
+
+   } else if (*endp == ':') {
+    /* Input is a Julian date with seconds; convert it to a calendar date. */
+    int jdays = leading, jsecs;
+    if (!parseInt(&jsecs, endp+1, &endp2, argv[i])) {
+     errored = true;
+     continue;
+    }
+    jdays += jsecs / DAY;
+    jsecs %= DAY;
+    if (jsecs < 0) {jdays--; jsecs += DAY; }
+    if (verbose) {
+     printJulian(jdays, jsecs, JS_PRECISION);
+     printf(" = ");
+    }
+    struct yds when = fromJulianDate(jdays, jsecs);
+    printStyled(when, jdays, jsecs, oldStyle);
+    putchar('\n');
+
+   } else if (*endp == '\0') {
+    /* Input is an integral Julian date; convert it to a calendar date. */
+    int jdays = leading, jsecs = -1;
     if (verbose) {
      printJulian(jdays, jsecs, JS_PRECISION);
      printf(" = ");
