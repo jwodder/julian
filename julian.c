@@ -386,7 +386,7 @@ void toJulianDate(struct yds when, int* jdays, int* jsecs) {
 struct yds fromJulianDate(int jdays, int jsecs) {
  int days = jdays;
  int secs = jsecs >= 0 ? jsecs + HALF_DAY : -1;
- if (secs > DAY) {secs -= DAY; days++; }
+ if (secs >= DAY) {secs -= DAY; days++; }
  if (days < START1600) {
   if (GREG_REFORM <= days) days += 10;
   int year, yday;
@@ -477,7 +477,7 @@ void printJulian(int jdays, int jsecs, int places) {
 void printOldStyle(int jdays, int jsecs) {
  /* TODO: Should this be merged into `printStyled`? */
  int secs = jsecs >= 0 ? jsecs + HALF_DAY : -1;
- if (secs > DAY) {secs -= DAY; jdays++; }
+ if (secs >= DAY) {secs -= DAY; jdays++; }
  int year, yday;
  julian2julian(jdays, &year, &yday);
  printf("O.S. ");
