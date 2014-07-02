@@ -467,7 +467,9 @@ void printJulian(int jdays, int jsecs, int places) {
     jsecs *= 10;
     int dig = jsecs / DAY;
     jsecs %= DAY;
-    if (i == places-1 && jsecs * 2 >= DAY) dig++;
+    /* TODO: What should happen when the last digit is a 9 that should be
+     * rounded up? */
+    if (i == places-1 && jsecs * 2 >= DAY && dig < 9) dig++;
     printf("%d", dig);
    }
   }
