@@ -133,7 +133,7 @@
 \&\fBjulian\fR \- convert Julian dates to & from calendar dates
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
-\&\fBjulian\fR [\fB\-O\fR | \fB\-o\fR] [\fB\-jv\fR] [\fIdate\fR ...]
+\&\fBjulian\fR [\fB\-O\fR | \fB\-o\fR] [\fB\-jsv\fR] [\fIdate\fR ...]
 .PP
 \&\fBjulian\fR \fB\-V\fR
 .SH "DESCRIPTION"
@@ -147,7 +147,8 @@ command line to a Julian date and each Julian date to a calendar date,
 outputting the results.
 .PP
 Julian dates are read & output as base\-10 numbers with optional fractional
-parts.
+parts.  They may also be written in the form \f(CW\*(C`DDDDDD:sssss\*(C'\fR, where the latter
+component is the number of seconds past noon as an integer.
 .PP
 Calendar dates are read & output in a subset of \s-1ISO\s0 8601 format: a
 \&\f(CW\*(C`YYYY\-MM\-DD\*(C'\fR string (with an optional \f(CW\*(C`+\*(C'\fR or \f(CW\*(C`\-\*(C'\fR prepended to the year)
@@ -180,6 +181,11 @@ brackets.
 Calendar dates between the Gregorian Reformation of 1582 and the \s-1UK\s0's adoption
 of the Gregorian reforms in 1752 will have the corresponding \*(L"Old Style\*(R"
 (Julian calendar) date appended to their output in brackets.
+.IP "\fB\-s\fR" 4
+.IX Item "-s"
+When the number of seconds is known, Julian dates will be output in the form
+\&\f(CW\*(C`DDDDDD:sssss\*(C'\fR (where the latter component is the number of seconds past noon
+as an integer) instead of \f(CW\*(C`DDDDDD.DDDDDD\*(C'\fR.
 .IP "\fB\-V\fR" 4
 .IX Item "-V"
 Display version information and exit

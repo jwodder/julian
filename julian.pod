@@ -6,7 +6,7 @@ B<julian> - convert Julian dates to & from calendar dates
 
 =head1 SYNOPSIS
 
-B<julian> [B<-O> | B<-o>] [B<-jv>] [I<date> ...]
+B<julian> [B<-O> | B<-o>] [B<-jsv>] [I<date> ...]
 
 B<julian> B<-V>
 
@@ -21,7 +21,8 @@ command line to a Julian date and each Julian date to a calendar date,
 outputting the results.
 
 Julian dates are read & output as base-10 numbers with optional fractional
-parts.
+parts.  They may also be written in the form C<DDDDDD:sssss>, where the latter
+component is the number of seconds past noon as an integer.
 
 Calendar dates are read & output in a subset of ISO 8601 format: a
 C<YYYY-MM-DD> string (with an optional C<+> or C<-> prepended to the year)
@@ -59,6 +60,12 @@ brackets.
 Calendar dates between the Gregorian Reformation of 1582 and the UK's adoption
 of the Gregorian reforms in 1752 will have the corresponding "Old Style"
 (Julian calendar) date appended to their output in brackets.
+
+=item B<-s>
+
+When the number of seconds is known, Julian dates will be output in the form
+C<DDDDDD:sssss> (where the latter component is the number of seconds past noon
+as an integer) instead of C<DDDDDD.DDDDDD>.
 
 =item B<-V>
 
