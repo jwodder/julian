@@ -61,7 +61,7 @@ void printYDS(struct yds when, bool jul);
 void printJulian(int jdays, int jsecs, int places);
 void printOldStyle(int jdays, int jsecs);
 
-bool printYday = false;
+bool printYday = false, intsecs = false;
 char* argv0 = NULL;
 
 int main(int argc, char** argv) {
@@ -69,11 +69,12 @@ int main(int argc, char** argv) {
  bool verbose = false, errored = false, endGetoptNow = false;
  int oldStyle = 0;
  argv0 = argv[0];
- while (!endGetoptNow && (ch = getopt(argc, argv, "jOovV0123456789")) != -1) {
+ while (!endGetoptNow && (ch = getopt(argc, argv, "jOosvV0123456789")) != -1) {
   switch (ch) {
    case 'j': printYday = true; break;
    case 'o': oldStyle = 1; break;
    case 'O': oldStyle = 2; break;
+   case 's': intsecs = true; break;
    case 'v': verbose = true; break;
    case 'V': fputs(version, stdout); return 0;
 
@@ -445,14 +446,17 @@ void printYDS(struct yds when, bool jul) {
 
 void printJulian(int jdays, int jsecs, int places) {
  printf("%d", jdays);
- if (places > 0 && jsecs >= 0) {
-  putchar('.');
-  for (int i=0; i<places; i++) {
-   jsecs *= 10;
-   int dig = jsecs / DAY;
-   jsecs %= DAY;
-   if (i == places-1 && jsecs * 2 >= DAY) dig++;
-   printf("%d", dig);
+ if (jsecs >= 0) {
+  if (intsecs) {printf(":%d", jsecs); }
+  else if (places > 0) {
+   putchar('.');
+   for (int i=0; i<places; i++) {
+    jsecs *= 10;
+    int dig = jsecs / DAY;
+    jsecs %= DAY;
+    if (i == places-1 && jsecs * 2 >= DAY) dig++;
+    printf("%d", dig);
+   }
   }
  }
 }

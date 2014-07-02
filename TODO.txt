@@ -13,9 +13,6 @@
   combined with `-j` (or lack thereof) and options for dealing with proleptic
   Gregorian calendars, this can be used to convert between calendars and
   calendar date representations
-- Add a way to input & output Julian dates as integer dates with an integer
-  number of seconds?  (e.g., 2456818:50881 as a less roundoff-error-prone
-  alternative to 2456818.5889)
 - Add an `-h` (help) flag?
 - Reject input of any calendar dates that have Julian dates outside an int's
   range
