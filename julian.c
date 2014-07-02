@@ -17,6 +17,12 @@ const char version[] =
  "julian is distributed under the terms of the MIT License.\n"
  "See <https://github.com/jwodder/julian> for the latest version.\n";
 
+#define JD_MIN  (365-INT_MAX)
+/* This limit on Julian dates is so that julian2julian's behavior of calling
+ * `julian2julian(365 - jdays, year, yday)` when `jdays` is negative will never
+ * result in another extremely negative `jdays` value, which would lead to an
+ * infinite loop. */
+
 #define JS_PRECISION  6
 
 #define MIN       60
@@ -208,9 +214,16 @@ int main(int argc, char** argv) {
      errored = true;
      continue;
     }
+    int jdays0 = jdays, jsecs0 = jsecs;
     jdays += jsecs / DAY;
     jsecs %= DAY;
     if (jsecs < 0) {jdays--; jsecs += DAY; }
+    if ((jsecs0 > 0 ? jdays < jdays0 : jdays > jdays0)
+        || jdays < JD_MIN || (jdays == INT_MAX && jsecs >= HALF_DAY)) {
+     fprintf(stderr, "%s: %s: value outside of allowed range\n",argv0,argv[i]);
+     errored = true;
+     continue;
+    }
     if (verbose) {
      printJulian(jdays, jsecs, JS_PRECISION);
      printf(" = ");
@@ -249,7 +262,7 @@ bool parseInt(int* i, char* str, char** endp, char* fullarg) {
  if (*endp == str) {
   fprintf(stderr, "%s: %s: invalid argument\n", argv0, fullarg);
   return false;
- } else if (errno == ERANGE || parsed < 365-INT_MAX || parsed > INT_MAX) {
+ } else if (errno == ERANGE || parsed < JD_MIN || parsed > INT_MAX) {
   /* The `365-INT_MAX` limit is so that julian2julian's behavior of calling
    * `julian2julian(365 - jdays, year, yday)` when `jdays` is negative will
    * never result in another extremely negative `jdays` value, which would lead
@@ -447,7 +460,7 @@ void printYDS(struct yds when, bool jul) {
 void printJulian(int jdays, int jsecs, int places) {
  printf("%d", jdays);
  if (jsecs >= 0) {
-  if (intsecs) {printf(":%d", jsecs); }
+  if (intsecs) {printf(":%05d", jsecs); }
   else if (places > 0) {
    putchar('.');
    for (int i=0; i<places; i++) {
