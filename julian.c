@@ -94,7 +94,7 @@ int main(int argc, char** argv) {
     * years to be used without getopt mistaking them for switches: */
    case '0': case '1': case '2': case '3': case '4':
    case '5': case '6': case '7': case '8': case '9':
-    if (strchr(argv[optind-1], ch) != NULL) {
+    if (optind > 1 && strchr(argv[optind-1], ch) != NULL) {
      /* If the "previous" argument contains the digit, then since no options
       * take any arguments, it must be the case that the "previous" argument is
       * actually the current argument and that there are no more characters
