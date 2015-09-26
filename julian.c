@@ -1,11 +1,13 @@
 /* Unless otherwise specified, all functions use a Gregorian calendar with the
  * Reformation taking place on 1582-10-05/15. */
 
+#define _XOPEN_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>  /* strchr */
-#include <ctype.h>  /* isdigit, digittoint */
+#include <ctype.h>  /* isdigit */
 #include <errno.h>
 #include <limits.h>  /* INT_MAX */
 #include <time.h>
@@ -193,7 +195,7 @@ int main(int argc, char** argv) {
     int jdays = leading, jsecs = 0;
     int coef = DAY/10, accum = 0, denom = 1;
     for (endp++; isdigit(*endp); endp++) {
-     accum += coef * digittoint(*endp);
+     accum += coef * (*endp - '0');
      jsecs += accum / denom;
      accum %= denom;
      if (coef % 10) {accum *= 10; denom *= 10; }
