@@ -13,7 +13,7 @@
   combined with `-j` (or lack thereof) and options for dealing with proleptic
   Gregorian calendars, this can be used to convert between calendars and
   calendar date representations
-- Add an `-h` (help) flag?
+- Add an `-h` (help) flag
 - Should `printJulian()` omit trailing zeroes from the fractional parts of JDs?
 
 - Add a note to the manpage about Julian days starting at noon and the

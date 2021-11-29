@@ -1,7 +1,7 @@
 #CC = c99
-#CFLAGS = -O2 -Wall
+#CFLAGS = -O2 -Wall -pedantic
 CC = gcc
-CFLAGS = -std=c99 -O2 -Wall
+CFLAGS = -std=c99 -O2 -Wall -pedantic
 
 all : julian julian.1
 
